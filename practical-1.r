@@ -26,6 +26,31 @@ for(punctuation in all_punctuation) {
 }
 
 ## 6
+#changes all capitals to lower case
+low_processed_bible <- tolower(processed_bible)
+
+#assigns each unique word a number
+unique_words <- unique(low_processed_bible)
+
+#matches each word in bible with its unique number
+match_words <- match(low_processed_bible, unique_words)
+
+#frequency of each word
+freq <- tabulate(match_words,length(unique_words))
+
+#frequency of each word in decreasing order
+dec_freq <- sort(freq, decreasing = TRUE)
+
+#finds 1000 most common words
+most_common <- numeric(length = 1000)
+for (i in 1:1000){
+    most_common[i] <- dec_freq[i]
+}
+
+b <- most_common
+
+
+
 
 ## Test scenarios:
 test <- c("dub:", "foo ", "bar,", "baz.", "bax,")
