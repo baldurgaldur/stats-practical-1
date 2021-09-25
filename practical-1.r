@@ -38,16 +38,23 @@ match_words <- match(low_processed_bible, unique_words)
 #frequency of each word
 freq <- tabulate(match_words,length(unique_words))
 
-#frequency of each word in decreasing order
-dec_freq <- sort(freq, decreasing = TRUE)
+threshold <- 100
 
-#finds 1000 most common words
-most_common <- numeric(length = 1000)
-for (i in 1:1000){
-    most_common[i] <- dec_freq[i]
+#creates vector that will contain the unique word indices
+#of commonly occurring words
+common_index <- numeric()
+
+#if a word occurs more than [threshold] times its index is added to common_index
+for (i in 1:length(freq)){
+    if (freq[i] >= threshold){
+        common_index <- append(common_index, i)
+    }
 }
 
-b <- most_common
+#vector of words that occur more than 100 times
+b <- unique_words[common_index]
+
+
 
 
 
