@@ -4,15 +4,20 @@ n <- length(raw_bible)
 raw_bible <- raw_bible[- ((n - 2909):n)] ## strip license
 
 split_punct <- function(words, punct) {
-    punct_index <- grep(punct, words, fixed = TRUE)
+    # To catch spaced out ellipses ". . ." as well as "."
+    # The regex formally describes:
+    # "Match the punc character, optionally followed by space,
+    # one or more times."
+    match_repetitions <- paste("(\\", punct, "\\s?)+", sep = "")
+    punct_index <- grep(match_repetitions, words, fixed = FALSE)
     words_and_punct <- rep("", length(words) + length(punct_index))
 
-    ## Each found punctuation pushes the next back by one
+    # Each found punctuation pushes the next back by one
     new_punct_index <- punct_index + 1:length(punct_index)
     
-    ## Insert the word without punctuation
-    words[punct_index] <- gsub(punct, "", words[punct_index], fixed = TRUE)
-    ## Insert the punctuation
+    # Insert the word without punctuation
+    words[punct_index] <- gsub(match_repetitions, "", words[punct_index], fixed = FALSE)
+    # Insert the punctuation. Note we do not insert the regex match.
     words_and_punct[new_punct_index] <- punct
     ## Insert the rest
     words_and_punct[-new_punct_index] <- words
