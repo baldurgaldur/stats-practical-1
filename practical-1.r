@@ -54,14 +54,13 @@ for (i in 1:length(freq)){
 #vector of words that occur more than 100 times
 b <- unique_words[common_index]
 
-
 ##Q 7
 
 #Vector, corr, of giving corresponding element of b from
 #lowercase bible
 corr <- match(low_processed_bible, b)
 
-#corr without last value and first
+#corr without last value since the last word has no next word
 corr_nolast <- head(corr, -1)
 corr_shift <- corr[-corr[1]]
 
@@ -73,30 +72,26 @@ common_pair <- pair_[rowSums(is.na(pair_)) == 0, ]
 
 #Initialize Matrix A (and A_new)
 A <- matrix(0, length(b), length(b))
-A_new <- matrix(0, length(b), length(b))
 
 #Create A[i,j] with 1 for every ith common word
 #followed by jth common word
 for (n in 1:nrow(common_pair)) {
-    A_new[common_pair[n,1],common_pair[n,2]] <- 1
-    A <- A_new
+    old_val <- A[common_pair[n, 1], common_pair[n, 2]]
+    A[common_pair[n, 1], common_pair[n, 2]] <- old_val + 1
 }
 
 #Vector containing row sums of A
 row_tot <- rowSums(A)
 
 #Initialize vector A_prob
-A_prob <- matrix(0 , nrow(A), ncol(A))
+A_prob <- matrix(0, nrow(A), ncol(A))
 
 #Create A_prob from A
 for (i in 1:nrow(A)) {
-    for (j in 1:ncol(A)) {
-        A_prob[i,j] <- A[i,j] / row_tot[i]
-    }
+    A_prob[i, ] <- A[i, ] / row_tot[i]
 }
 
-
-
+print("done")
 
 ## Test scenarios:
 test <- c("dub:", "foo ", "bar,", "baz.", "bax,")
