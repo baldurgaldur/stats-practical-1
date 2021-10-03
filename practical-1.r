@@ -91,7 +91,16 @@ for (i in 1:nrow(A)) {
     A_prob[i, ] <- A[i, ] / row_tot[i]
 }
 
-print("done")
+##8
+j_0 <- sample(1:length(b) , 1)
+sentence_index <- rep(NA, 50)
+sentence_index[1] <- j_0
+for (i in 2:50) {
+   sentence_index[i] <- sample(1:ncol(A), size = 1, prob = A_prob[i-1, ])
+}
+
+cat(b[sentence_index])
+
 
 ## Test scenarios:
 test <- c("dub:", "foo ", "bar,", "baz.", "bax,")
