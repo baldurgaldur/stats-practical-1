@@ -5,13 +5,17 @@ raw_bible <- raw_bible[- ((n - 2909):n)] ## strip license
 
 split_punct <- function(words, punct) {
     punct_index <- grep(punct, words, fixed = TRUE)
+    if (length(punct_index) == 0) {
+        # No match for this punc.
+        return(words)
+    }
     words_and_punct <- rep("", length(words) + length(punct_index))
 
     # Each found punctuation pushes the next back by one
     new_punct_index <- punct_index + 1:length(punct_index)
-    
     # Insert the word without punctuation
     words[punct_index] <- gsub(punct, "", words[punct_index], fixed = TRUE)
+
     # Insert the punctuation. Note we do not insert the regex match.
     words_and_punct[new_punct_index] <- punct
     ## Insert the rest
@@ -21,7 +25,7 @@ split_punct <- function(words, punct) {
 
 processed_bible <- raw_bible
 all_punctuation <- c(",", ".", ";", "!", ":", "?")
-for(punctuation in all_punctuation) {
+for (punctuation in all_punctuation) {
     processed_bible <- split_punct(processed_bible, punctuation)
 }
 
@@ -36,7 +40,7 @@ unique_words <- unique(low_processed_bible)
 match_words <- match(low_processed_bible, unique_words)
 
 #frequency of each word
-freq <- tabulate(match_words,length(unique_words))
+freq <- tabulate(match_words, length(unique_words))
 
 threshold <- 100
 
@@ -46,7 +50,7 @@ common_index <- numeric()
 
 #if a word occurs more than [threshold] times its index is added to common_index
 for (i in 1:length(freq)){
-    if (freq[i] >= threshold){
+    if (freq[i] >= threshold) {
         common_index <- append(common_index, i)
     }
 }
@@ -73,7 +77,7 @@ common_pair <- pair_[rowSums(is.na(pair_)) == 0, ]
 #Initialize Matrix A (and A_new)
 A <- matrix(0, length(b), length(b))
 
-#Create A[i,j] with 1 for every ith common word
+#Increment A[i,j] with 1 for every ith common word
 #followed by jth common word
 for (n in 1:nrow(common_pair)) {
     old_val <- A[common_pair[n, 1], common_pair[n, 2]]
@@ -87,10 +91,10 @@ row_tot <- rowSums(A)
 A_prob <- matrix(0, nrow(A), ncol(A))
 
 #Create A_prob from A
-A_prob <- A/row_tot
+A_prob <- A / row_tot
 
 ##8
-j_0 <- sample(1:length(b) , 1)
+j_0 <- sample(1:length(b), 1)
 sentence_index <- rep(NA, 50)
 sentence_index[1] <- j_0
 for (i in 2:50) {
@@ -98,12 +102,3 @@ for (i in 2:50) {
 }
 
 cat(b[sentence_index])
-
-
-## Test scenarios:
-test <- c("dub:", "foo ", "bar,", "baz.", "bax,")
-commas_gone <- split_punct(test, ",")
-print(commas_gone)
-print(split_punct(test, "."))
-
-print(split_punct(commas_gone, ":"))
