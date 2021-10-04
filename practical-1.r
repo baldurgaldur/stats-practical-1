@@ -87,7 +87,7 @@ row_tot <- rowSums(A)
 A_prob <- matrix(0, nrow(A), ncol(A))
 
 #Create A_prob from A
-prob_A <- A/row_tot
+A_prob <- A/row_tot
 
 ##8
 j_0 <- sample(1:length(b) , 1)
