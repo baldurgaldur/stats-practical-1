@@ -94,7 +94,7 @@ j_0 <- sample(1:length(b) , 1)
 sentence_index <- rep(NA, 50)
 sentence_index[1] <- j_0
 for (i in 2:50) {
-   sentence_index[i] <- sample(1:ncol(A), size = 1, prob = A_prob[i-1, ])
+   sentence_index[i] <- sample(1:ncol(A), size = 1, prob = A_prob[sentence_index[i-1], ])
 }
 
 cat(b[sentence_index])
