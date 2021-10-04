@@ -49,7 +49,7 @@ threshold <- 100
 common_index <- numeric()
 
 #if a word occurs more than [threshold] times its index is added to common_index
-for (i in 1:length(freq)){
+for (i in 1:length(freq)) {
     if (freq[i] >= threshold) {
         common_index <- append(common_index, i)
     }
@@ -57,6 +57,22 @@ for (i in 1:length(freq)){
 
 #vector of words that occur more than 100 times
 b <- unique_words[common_index]
+
+# Capitalize b based on frequency
+b_cap <- vector(mode = "character", length = length(b))
+for (i in 1:length(b))
+    b_cap[i] <- paste(toupper(substring(b[i], 1,1)), substring(b[i], 2), sep="", collapse=" ")
+
+#matches each word in bible if it is in b
+match_case <- match(low_processed_bible, b)
+#frequency of each word in b
+freq_case <- tabulate(match_case, length(b))
+
+match_cap <- match(processed_bible, b_cap)
+capital_freq <- tabulate(match_cap, length(b_cap))
+
+should_capital <- capital_freq / freq > 0.5
+b_case_sensitive <- ifelse(capital_freq / freq > 0.5, b_cap, b)
 
 ##Q 7
 
@@ -102,3 +118,4 @@ for (i in 2:50) {
 }
 
 cat(b[sentence_index])
+cat(b_case_sensitive[sentence_index])
