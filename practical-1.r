@@ -5,13 +5,17 @@ raw_bible <- raw_bible[- ((n - 2909):n)] ## strip license
 
 split_punct <- function(words, punct) {
     punct_index <- grep(punct, words, fixed = TRUE)
+    if (length(punct_index) == 0) {
+        # No match for this punc.
+        return(words)
+    }
     words_and_punct <- rep("", length(words) + length(punct_index))
 
     # Each found punctuation pushes the next back by one
     new_punct_index <- punct_index + 1:length(punct_index)
-    
     # Insert the word without punctuation
     words[punct_index] <- gsub(punct, "", words[punct_index], fixed = TRUE)
+
     # Insert the punctuation. Note we do not insert the regex match.
     words_and_punct[new_punct_index] <- punct
     ## Insert the rest
@@ -21,7 +25,7 @@ split_punct <- function(words, punct) {
 
 processed_bible <- raw_bible
 all_punctuation <- c(",", ".", ";", "!", ":", "?")
-for(punctuation in all_punctuation) {
+for (punctuation in all_punctuation) {
     processed_bible <- split_punct(processed_bible, punctuation)
 }
 
@@ -36,7 +40,7 @@ unique_words <- unique(low_processed_bible)
 match_words <- match(low_processed_bible, unique_words)
 
 #frequency of each word
-freq <- tabulate(match_words,length(unique_words))
+freq <- tabulate(match_words, length(unique_words))
 
 threshold <- 100
 
@@ -45,8 +49,8 @@ threshold <- 100
 common_index <- numeric()
 
 #if a word occurs more than [threshold] times its index is added to common_index
-for (i in 1:length(freq)){
-    if (freq[i] >= threshold){
+for (i in 1:length(freq)) {
+    if (freq[i] >= threshold) {
         common_index <- append(common_index, i)
     }
 }
@@ -54,15 +58,64 @@ for (i in 1:length(freq)){
 #vector of words that occur more than 100 times
 b <- unique_words[common_index]
 
+# Capitalize b based on frequency
+b_cap <- vector(mode = "character", length = length(b))
+for (i in 1:length(b))
+    b_cap[i] <- paste(toupper(substring(b[i], 1,1)), substring(b[i], 2), sep="", collapse=" ")
 
+#matches each word in bible if it is in b
+match_case <- match(low_processed_bible, b)
+#frequency of each word in b
+freq_case <- tabulate(match_case, length(b))
 
+match_cap <- match(processed_bible, b_cap)
+capital_freq <- tabulate(match_cap, length(b_cap))
 
+should_capital <- capital_freq / freq > 0.5
+b_case_sensitive <- ifelse(capital_freq / freq > 0.5, b_cap, b)
 
+##Q 7
 
-## Test scenarios:
-test <- c("dub:", "foo ", "bar,", "baz.", "bax,")
-commas_gone <- split_punct(test, ",")
-print(commas_gone)
-print(split_punct(test, "."))
+#Vector, corr, of giving corresponding element of b from
+#lowercase bible
+corr <- match(low_processed_bible, b)
 
-print(split_punct(commas_gone, ":"))
+#corr without last value since the last word has no next word
+corr_nolast <- head(corr, -1)
+corr_shift <- corr[-corr[1]]
+
+#Matrix of corr_nolast and corr_shift
+pair_ <- cbind(corr_nolast, corr_shift)
+
+#Matrix containing only common word pairs
+common_pair <- pair_[rowSums(is.na(pair_)) == 0, ]
+
+#Initialize Matrix A (and A_new)
+A <- matrix(0, length(b), length(b))
+
+#Increment A[i,j] with 1 for every ith common word
+#followed by jth common word
+for (n in 1:nrow(common_pair)) {
+    old_val <- A[common_pair[n, 1], common_pair[n, 2]]
+    A[common_pair[n, 1], common_pair[n, 2]] <- old_val + 1
+}
+
+#Vector containing row sums of A
+row_tot <- rowSums(A)
+
+#Initialize vector A_prob
+A_prob <- matrix(0, nrow(A), ncol(A))
+
+#Create A_prob from A
+A_prob <- A / row_tot
+
+##8
+j_0 <- sample(1:length(b), 1)
+sentence_index <- rep(NA, 50)
+sentence_index[1] <- j_0
+for (i in 2:50) {
+   sentence_index[i] <- sample(1:ncol(A), size = 1, prob = A_prob[sentence_index[i-1], ])
+}
+
+cat(b[sentence_index])
+cat(b_case_sensitive[sentence_index])
