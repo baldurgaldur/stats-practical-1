@@ -45,7 +45,7 @@ match_words <- match(low_processed_bible, unique_words)
 # Frequency of each word
 freq <- tabulate(match_words, length(unique_words))
 
-threshold <- 100
+threshold <- 90
 
 # Create a vector that will contain the unique word indices
 # of commonly occurring words
@@ -85,7 +85,7 @@ b_case_sensitive <- ifelse(b_cap_freq / b_freq > 0.5, b_cap, b)
 corr <- match(low_processed_bible, b)
 
 # Corr without last value since the last word has no next word
-corr_nolast <- head(corr, -1)
+corr_nolast <- corr[-length(corr)]
 corr_shift <- corr[-corr[1]]
 
 # Matrix of corr_nolast and corr_shift
