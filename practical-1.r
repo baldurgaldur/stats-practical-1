@@ -51,7 +51,7 @@ match_words <- match(low_processed_bible, unique_words)
 freq <- tabulate(match_words, length(unique_words))
 
 # This magic number gives 1004 words for b
-threshold <- 100
+threshold <- 90
 
 # Create a vector that will contain the unique word indices
 # of commonly occurring words
@@ -73,7 +73,7 @@ b <- unique_words[common_index]
 corr <- match(low_processed_bible, b)
 
 # Corr without last value since the last word has no next word
-corr_nolast <- head(corr, -1)
+corr_nolast <- corr[-length(corr)]
 corr_shift <- corr[-corr[1]]
 
 # The first column is the b position of every unique word in the bible
