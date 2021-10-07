@@ -8,7 +8,7 @@ raw_bible <- raw_bible[- ((n - 2909):n)]
 # is in a particular position.
 #
 # E.g. assuming words = ["Amen, praise him! god"] and punct = ","
-# The result is: ["Amen praise him!", ","]
+# The result is: ["Amen praise him! god" ","]
 split_punct <- function(words, punct) {
     punct_index <- grep(punct, words, fixed = TRUE)
     if (length(punct_index) == 0) {
