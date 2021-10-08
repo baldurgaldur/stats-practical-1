@@ -37,7 +37,8 @@ for (punctuation in all_punctuation) {
     processed_bible <- split_punct(processed_bible, punctuation)
 }
 
-# Q.6
+
+
 # Lower case makes for easier searching
 low_processed_bible <- tolower(processed_bible)
 
@@ -68,7 +69,8 @@ for (i in 1:length(freq)) {
 # Vector of words that occur more than 90 times
 b <- unique_words[common_index]
 
-# Q.7
+
+
 # Match bible position of each word in b
 corr <- match(low_processed_bible, b)
 
@@ -98,7 +100,8 @@ row_sum <- rowSums(A)
 A_prob <- matrix(0, nrow(A), ncol(A))
 A_prob <- A / row_sum
 
-# Q.8
+
+
 # Using our model
 first_word <- sample(1:length(b), 1)
 sentence_index <- rep(NA, 50)
